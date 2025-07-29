@@ -2,7 +2,7 @@ import axios from "axios";
 import { DogAPIResponse, BreedsListResponse, DogBreed } from "../types";
 import { cacheService } from "./cacheService";
 
-const DOG_API_BASE_URL = process.env.DOG_API_BASE_URL;
+const DOG_API_BASE_URL = "https://dog.ceo/api";
 
 // Configure axios with timeout
 const apiClient = axios.create({
