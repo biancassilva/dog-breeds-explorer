@@ -138,10 +138,10 @@ export class FavoritesService {
       }
 
       await this.writeFavorites(filteredFavorites);
-      
+
       // Clear cache for this breed since it's no longer in favorites
       dogApiService.clearCache(breed);
-      
+
       return true;
     } catch (error) {
       console.error("Error removing favorite:", error);

@@ -2,7 +2,7 @@ import axios from "axios";
 import { DogAPIResponse, BreedsListResponse, DogBreed } from "../types";
 import { cacheService } from "./cacheService";
 
-const DOG_API_BASE_URL = "https://dog.ceo/api";
+const DOG_API_BASE_URL = process.env.DOG_API_BASE_URL;
 
 // Configure axios with timeout
 const apiClient = axios.create({
@@ -26,7 +26,7 @@ export class DogApiService {
    */
   async getAllBreeds(): Promise<DogBreed[]> {
     const cacheKey = "all_breeds_with_images";
-    
+
     // Try to get from cache first
     const cached = cacheService.get<DogBreed[]>(cacheKey);
     if (cached) {
@@ -35,7 +35,7 @@ export class DogApiService {
     }
 
     console.log("🔄 Fetching fresh breeds data from API");
-    
+
     try {
       const response = await apiClient.get<BreedsListResponse>(
         `${DOG_API_BASE_URL}/breeds/list/all`
@@ -80,10 +80,14 @@ export class DogApiService {
       await Promise.allSettled(breedPromises);
 
       const sortedBreeds = breeds.sort((a, b) => a.name.localeCompare(b.name));
-      
+
       // Cache the result
       cacheService.set(cacheKey, sortedBreeds, CACHE_TTL.BREEDS_LIST);
-      console.log(`✅ Cached ${sortedBreeds.length} breeds for ${CACHE_TTL.BREEDS_LIST / 60000} minutes`);
+      console.log(
+        `✅ Cached ${sortedBreeds.length} breeds for ${
+          CACHE_TTL.BREEDS_LIST / 60000
+        } minutes`
+      );
 
       return sortedBreeds;
     } catch (error) {
@@ -99,7 +103,7 @@ export class DogApiService {
    */
   private async fetchBreedImage(breedPath: string): Promise<string> {
     const cacheKey = `breed_image_${breedPath}`;
-    
+
     // Try to get from cache first
     const cached = cacheService.get<string>(cacheKey);
     if (cached) {
@@ -115,10 +119,10 @@ export class DogApiService {
         const imageUrl = Array.isArray(response.data.message)
           ? response.data.message[0]
           : response.data.message;
-        
+
         // Cache the result
         cacheService.set(cacheKey, imageUrl, CACHE_TTL.SINGLE_IMAGE);
-        
+
         return imageUrl;
       }
       return "";
@@ -136,7 +140,7 @@ export class DogApiService {
    */
   async getBreedImages(breed: string, count: number = 3): Promise<string[]> {
     const cacheKey = `breed_images_${breed}_${count}`;
-    
+
     // Try to get from cache first
     const cached = cacheService.get<string[]>(cacheKey);
     if (cached) {
@@ -145,7 +149,7 @@ export class DogApiService {
     }
 
     console.log(`🔄 Fetching fresh images for ${breed} (${count} images)`);
-    
+
     try {
       const response = await apiClient.get<DogAPIResponse>(
         `${DOG_API_BASE_URL}/breed/${breed}/images/random/${count}`
@@ -162,7 +166,11 @@ export class DogApiService {
 
       // Cache the result
       cacheService.set(cacheKey, images, CACHE_TTL.BREED_IMAGES);
-      console.log(`✅ Cached ${images.length} images for ${breed} for ${CACHE_TTL.BREED_IMAGES / 60000} minutes`);
+      console.log(
+        `✅ Cached ${images.length} images for ${breed} for ${
+          CACHE_TTL.BREED_IMAGES / 60000
+        } minutes`
+      );
 
       return images;
     } catch (error) {

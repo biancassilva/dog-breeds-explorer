@@ -1,0 +1,16 @@
+[
+  {
+    "breed": "airedale",
+    "addedAt": "2025-07-29T20:48:34.859Z",
+    "image": "https://images.dog.ceo/breeds/airedale/n02096051_3700.jpg"
+  },
+  {
+    "breed": "golden",
+    "addedAt": "2025-07-29T20:53:23.488Z"
+  },
+  {
+    "breed": "husky",
+    "addedAt": "2025-07-29T20:53:26.688Z",
+    "image": "https://images.dog.ceo/breeds/husky/n02110185_14594.jpg"
+  }
+]
